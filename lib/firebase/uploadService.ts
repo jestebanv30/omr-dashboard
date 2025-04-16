@@ -8,7 +8,7 @@ import {
   query,
   setDoc,
 } from "firebase/firestore";
-import { db, auth } from "./config";
+import { auth, db } from "./config";
 
 interface Estudiante {
   archivo: string;
@@ -41,35 +41,56 @@ const getCollectionByUser = () => {
 
 export const subirResultadosEstudiantes = async (data: ResultadoJson) => {
   const collectionName = getCollectionByUser();
-
-  // Obtener el último ID secuencial
   const estudiantesRef = collection(db, collectionName);
-  const q = query(estudiantesRef, orderBy("secuencialId", "desc"), limit(1));
-  const querySnapshot = await getDocs(q);
 
-  let ultimoId = 0;
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    if (data.secuencialId) {
-      ultimoId = data.secuencialId;
-    }
-  });
+  const isNuevaColeccion = collectionName === "estudiantes_remedios_solano";
 
-  const batchPromises = data.estudiantes.map(async (est, index) => {
-    const nuevoId = ultimoId + index + 1;
-    const docRef = doc(collection(db, collectionName), `EST_${nuevoId}`);
-    await setDoc(docRef, {
-      nombre: est.nombre,
-      identificacion: est.identificacion,
-      institucion: est.institucion,
-      grado: est.grado,
-      curso: est.curso,
-      respuestas: est.respuestas,
-      archivo: est.archivo,
-      secuencialId: nuevoId,
-      timestamp: new Date(),
+  if (isNuevaColeccion) {
+    const batchPromises = data.estudiantes.map(async (est) => {
+      const docRef = doc(estudiantesRef); // Firestore genera un ID
+      await setDoc(docRef, {
+        id: docRef.id,
+        archivo: est.archivo,
+        nombre: est.nombre,
+        identificacion: est.identificacion,
+        institucion: est.institucion,
+        grado: est.grado,
+        curso: est.curso,
+        respuestas: est.respuestas,
+        fechaCreacion: new Date().toISOString(),
+      });
     });
-  });
+    await Promise.all(batchPromises);
+  } else {
+    // Obtener el último ID secuencial
+    const q = query(estudiantesRef, orderBy("secuencialId", "desc"), limit(1));
+    const querySnapshot = await getDocs(q);
 
-  await Promise.all(batchPromises);
+    let ultimoId = 0;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.secuencialId) {
+        ultimoId = data.secuencialId;
+      }
+    });
+
+    const batchPromises = data.estudiantes.map(async (est, index) => {
+      const nuevoId = ultimoId + index + 1;
+      const archivo = `EST_${nuevoId}`;
+      const docRef = doc(estudiantesRef, archivo);
+      await setDoc(docRef, {
+        archivo,
+        nombre: est.nombre,
+        identificacion: est.identificacion,
+        institucion: est.institucion,
+        grado: est.grado,
+        curso: est.curso,
+        respuestas: est.respuestas,
+        secuencialId: nuevoId,
+        fechaCreacion: new Date().toISOString(),
+      });
+    });
+
+    await Promise.all(batchPromises);
+  }
 };

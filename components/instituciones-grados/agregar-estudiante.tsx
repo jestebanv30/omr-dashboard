@@ -87,7 +87,19 @@ export function AgregarEstudianteForm({
 
   const handleConfirmSubmit = async () => {
     try {
-      await agregarEstudiante(formData as Estudiante);
+      // Inicializar todas las respuestas vacías
+      const respuestasCompletas: Record<string, string> = {};
+      for (let i = 1; i <= totalPreguntas; i++) {
+        const respuestaActual = formData.respuestas?.[i.toString()];
+        respuestasCompletas[i.toString()] = respuestaActual || "";
+      }
+
+      const estudianteCompleto = {
+        ...formData,
+        respuestas: respuestasCompletas,
+      };
+
+      await agregarEstudiante(estudianteCompleto as Estudiante);
       toast.success("Estudiante agregado correctamente");
       onClose?.();
     } catch (error) {
@@ -126,7 +138,10 @@ export function AgregarEstudianteForm({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmSubmit}>
+            <AlertDialogAction
+              onClick={handleConfirmSubmit}
+              className="bg-green-600 hover:bg-green-700"
+            >
               Confirmar
             </AlertDialogAction>
           </AlertDialogFooter>

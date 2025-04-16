@@ -10,6 +10,7 @@ import {
 import { auth, db } from "./config";
 
 export interface Estudiante {
+  id?: string; // id del documento
   archivo: string;
   nombre: string;
   identificacion: string;
@@ -17,8 +18,9 @@ export interface Estudiante {
   grado: string;
   curso: string;
   respuestas: Record<string, string>;
-  secuencialId: number;
+  secuencialId?: number;
   listo?: boolean;
+  fechaCreacion?: string;
 }
 
 const getCollectionByUser = () => {
@@ -50,7 +52,10 @@ export const getInstitucionByUser = () => {
 export const obtenerTodosLosEstudiantes = async (): Promise<Estudiante[]> => {
   const collectionName = getCollectionByUser();
   const snapshot = await getDocs(collection(db, collectionName));
-  return snapshot.docs.map((doc) => doc.data() as Estudiante);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as Estudiante),
+  }));
 };
 
 export const obtenerEstudiantesPorGrado = async (
@@ -60,7 +65,10 @@ export const obtenerEstudiantesPorGrado = async (
   const ref = collection(db, collectionName);
   const q = query(ref, where("grado", "==", grado));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => doc.data() as Estudiante);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as Estudiante),
+  }));
 };
 
 export const agruparPorGrado = async () => {
@@ -91,92 +99,94 @@ export const obtenerEstudiantesPorCurso = async (
     where("curso", "==", curso)
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => doc.data() as Estudiante);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as Estudiante),
+  }));
 };
 
-export const agregarEstudiante = async (estudiante: Estudiante) => {
-  try {
-    const collectionName = getCollectionByUser();
-    // Obtener todos los estudiantes para calcular el siguiente secuencialId
+export const agregarEstudiante = async (
+  estudiante: Omit<
+    Estudiante,
+    "archivo" | "institucion" | "fechaCreacion" | "secuencialId" | "id"
+  >
+): Promise<Estudiante> => {
+  const collectionName = getCollectionByUser();
+  const institucion = getInstitucionByUser();
+  const isNuevaColeccion = collectionName === "estudiantes_remedios_solano";
+
+  if (isNuevaColeccion) {
+    const docRef = doc(collection(db, collectionName));
+    const nuevoEstudiante: Estudiante = {
+      ...estudiante,
+      id: docRef.id,
+      archivo: "Agregado Manual",
+      institucion,
+      fechaCreacion: new Date().toISOString(),
+    };
+    await setDoc(docRef, nuevoEstudiante);
+    return nuevoEstudiante;
+  } else {
     const estudiantes = await obtenerTodosLosEstudiantes();
     const maxId = estudiantes.reduce(
-      (max, est) => Math.max(max, est.secuencialId),
+      (max, e) => Math.max(max, e.secuencialId ?? 0),
       0
     );
     const nuevoId = maxId + 1;
+    const archivo = `EST_${nuevoId}`;
 
-    // Asignar el nuevo secuencialId y generar el archivo
-    const estudianteCompleto = {
+    const nuevoEstudiante: Estudiante = {
       ...estudiante,
+      archivo,
       secuencialId: nuevoId,
-      archivo: `EST_${nuevoId}`,
-      institucion: getInstitucionByUser(), // Ahora usa la función para obtener la institución
+      institucion,
+      fechaCreacion: new Date().toISOString(),
     };
-
-    // Guardar el estudiante en Firestore
-    const docRef = doc(collection(db, collectionName), `EST_${nuevoId}`);
-    await setDoc(docRef, estudianteCompleto);
-
-    return estudianteCompleto;
-  } catch (error) {
-    console.error("Error al agregar estudiante:", error);
-    throw error;
+    const docRef = doc(collection(db, collectionName), archivo);
+    await setDoc(docRef, nuevoEstudiante);
+    return nuevoEstudiante;
   }
 };
 
 export const actualizarEstudiante = async (
-  secuencialId: number,
+  id: string,
   data: Partial<Estudiante>
 ) => {
   const collectionName = getCollectionByUser();
-  const docRef = doc(collection(db, collectionName), `EST_${secuencialId}`);
+  const docRef = doc(collection(db, collectionName), id);
   await setDoc(docRef, data, { merge: true });
 };
 
-export const marcarEstudianteComoListo = async (
-  secuencialId: number,
-  listo: boolean
-) => {
+export const marcarEstudianteComoListo = async (id: string, listo: boolean) => {
   const collectionName = getCollectionByUser();
-  const docRef = doc(collection(db, collectionName), `EST_${secuencialId}`);
+  const docRef = doc(collection(db, collectionName), id);
   await setDoc(docRef, { listo }, { merge: true });
 };
 
-export const eliminarEstudiantesPorGrado = async (
-  grado: string
-): Promise<number> => {
+export const eliminarEstudiante = async (id: string): Promise<boolean> => {
   try {
     const collectionName = getCollectionByUser();
-    const ref = collection(db, collectionName);
-    const q = query(ref, where("grado", "==", grado));
-    const snapshot = await getDocs(q);
-
-    const batchDeletions = snapshot.docs.map(async (docSnap) => {
-      await deleteDoc(docSnap.ref);
-    });
-
-    await Promise.all(batchDeletions);
-    console.log(
-      `✔️ Se eliminaron ${snapshot.size} estudiantes del grado ${grado}`
-    );
-    return snapshot.size;
-  } catch (error) {
-    console.error("❌ Error al eliminar estudiantes por grado:", error);
-    return 0;
-  }
-};
-
-export const eliminarEstudiante = async (
-  secuencialId: number
-): Promise<boolean> => {
-  try {
-    const collectionName = getCollectionByUser();
-    const docRef = doc(collection(db, collectionName), `EST_${secuencialId}`);
+    const docRef = doc(collection(db, collectionName), id);
     await deleteDoc(docRef);
-    console.log(`✔️ Se eliminó el estudiante con ID ${secuencialId}`);
     return true;
   } catch (error) {
     console.error("❌ Error al eliminar estudiante:", error);
     return false;
   }
+};
+
+export const eliminarEstudiantesPorGrado = async (
+  grado: string
+): Promise<number> => {
+  const collectionName = getCollectionByUser();
+  const ref = collection(db, collectionName);
+  const q = query(ref, where("grado", "==", grado));
+  const snapshot = await getDocs(q);
+
+  const batchDeletions = snapshot.docs.map(async (docSnap) => {
+    await deleteDoc(docSnap.ref);
+  });
+
+  await Promise.all(batchDeletions);
+  return snapshot.size;
 };

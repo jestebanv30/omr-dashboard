@@ -17,6 +17,16 @@ import {
 import * as React from "react";
 import { z } from "zod";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -40,6 +50,7 @@ import {
   eliminarEstudiante,
   marcarEstudianteComoListo,
   obtenerEstudiantesPorCurso,
+  type Estudiante as EstudianteType,
 } from "@/lib/firebase/estudiantesService";
 import {
   IconChevronDown,
@@ -55,11 +66,11 @@ import { AgregarEstudianteForm } from "./agregar-estudiante";
 import { EditEstudianteForm } from "./edit-estudiante";
 
 interface TableMeta {
-  updateData: (data: Estudiante[]) => void;
+  updateData: (data: EstudianteType[]) => void;
 }
 
 export const estudianteSchema = z.object({
-  secuencialId: z.number(),
+  id: z.string().optional(),
   archivo: z.string(),
   nombre: z.string(),
   identificacion: z.string(),
@@ -68,6 +79,8 @@ export const estudianteSchema = z.object({
   curso: z.string(),
   respuestas: z.record(z.string()),
   listo: z.boolean().optional(),
+  secuencialId: z.number().optional(),
+  fechaCreacion: z.string().optional(),
 });
 
 type Estudiante = z.infer<typeof estudianteSchema>;
@@ -80,11 +93,17 @@ const ActionCell = ({
   table: TableType<Estudiante>;
 }) => {
   const [showEditForm, setShowEditForm] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const estudiante = row.original;
 
   const handleDelete = async () => {
     try {
-      const success = await eliminarEstudiante(estudiante.secuencialId);
+      if (!estudiante.id) {
+        toast.error("ID de estudiante no encontrado");
+        return;
+      }
+
+      const success = await eliminarEstudiante(estudiante.id);
       if (success) {
         toast.success("Estudiante eliminado correctamente");
         const datos = await obtenerEstudiantesPorCurso(
@@ -115,12 +134,36 @@ const ActionCell = ({
             Editar
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+          <DropdownMenuItem
+            onClick={() => setShowDeleteDialog(true)}
+            className="text-red-600"
+          >
             <IconTrash className="mr-2 h-4 w-4" />
             Eliminar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Confirmar eliminación?</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de que deseas eliminar este estudiante? Esta acción
+              no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {showEditForm && (
         <EditEstudianteForm
@@ -150,7 +193,8 @@ const columns: ColumnDef<Estudiante>[] = [
         <Checkbox
           checked={estudiante.listo || false}
           onCheckedChange={async (value) => {
-            await marcarEstudianteComoListo(estudiante.secuencialId, !!value);
+            if (!estudiante.id) return;
+            await marcarEstudianteComoListo(estudiante.id, !!value);
             const datos = await obtenerEstudiantesPorCurso(
               estudiante.grado,
               estudiante.curso
@@ -165,8 +209,9 @@ const columns: ColumnDef<Estudiante>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "secuencialId",
+    accessorFn: (row) => row.secuencialId || row.id,
     header: "ID",
+    enableHiding: true,
   },
   {
     accessorKey: "archivo",
@@ -210,15 +255,17 @@ export function DataTableEstudiantes({
     []
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      ID: false, // Ocultar la columna ID por defecto
+    });
   const [rowSelection, setRowSelection] = React.useState({});
-  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+  const [estudiantes, setEstudiantes] = useState<EstudianteType[]>([]);
   const [showAgregarForm, setShowAgregarForm] = useState(false);
 
   useEffect(() => {
     const cargarEstudiantes = async () => {
       const datos = await obtenerEstudiantesPorCurso(grado, curso);
-      setEstudiantes([...datos]);
+      setEstudiantes(datos);
     };
     cargarEstudiantes();
   }, [grado, curso]);
@@ -241,8 +288,8 @@ export function DataTableEstudiantes({
       rowSelection,
     },
     meta: {
-      updateData: (data: Estudiante[]) => {
-        setEstudiantes([...data]);
+      updateData: (data: EstudianteType[]) => {
+        setEstudiantes(data);
       },
     },
   });
@@ -382,7 +429,7 @@ export function DataTableEstudiantes({
           onClose={() => {
             setShowAgregarForm(false);
             obtenerEstudiantesPorCurso(grado, curso).then((datos) => {
-              setEstudiantes([...datos]);
+              setEstudiantes(datos);
             });
           }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"

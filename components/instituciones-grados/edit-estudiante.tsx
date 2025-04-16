@@ -53,7 +53,11 @@ export function EditEstudianteForm({
 
   const handleConfirmSubmit = async () => {
     try {
-      await actualizarEstudiante(formData.secuencialId, formData);
+      if (!formData.id) {
+        toast.error("ID de estudiante no encontrado");
+        return;
+      }
+      await actualizarEstudiante(formData.id, formData);
       toast.success("Estudiante actualizado correctamente");
       onClose?.();
     } catch (error) {
@@ -92,7 +96,10 @@ export function EditEstudianteForm({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmSubmit}>
+            <AlertDialogAction
+              onClick={handleConfirmSubmit}
+              className="bg-green-600 hover:bg-green-700"
+            >
               Confirmar
             </AlertDialogAction>
           </AlertDialogFooter>
