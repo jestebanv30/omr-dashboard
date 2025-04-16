@@ -25,7 +25,7 @@ import {
   type Estudiante,
 } from "@/lib/firebase/estudiantesService";
 import { cn } from "@/lib/utils";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { toast } from "sonner";
 
 interface AgregarEstudianteFormProps extends React.ComponentProps<"div"> {
@@ -51,9 +51,30 @@ export function AgregarEstudianteForm({
   });
   const [currentPage, setCurrentPage] = useState(0);
   const [showDialog, setShowDialog] = useState(false);
+  const [totalPreguntas, setTotalPreguntas] = useState(0);
 
-  // Crear un array de 58 preguntas vacías
-  const respuestasArray = Array.from({ length: 58 }, (_, i) => [
+  useEffect(() => {
+    const fetchRespuestasCorrectas = async () => {
+      try {
+        const response = await fetch("/respuestas_correctas.json");
+        const data = await response.json();
+        if (grado && data[grado]) {
+          const respuestasCorrectas = data[grado].respuestas_correctas;
+          const maxPregunta = Math.max(
+            ...Object.keys(respuestasCorrectas).map(Number)
+          );
+          setTotalPreguntas(maxPregunta);
+        }
+      } catch (error) {
+        console.error("Error al cargar respuestas correctas:", error);
+      }
+    };
+
+    fetchRespuestasCorrectas();
+  }, [grado]);
+
+  // Crear array de preguntas basado en el total de preguntas del grado
+  const respuestasArray = Array.from({ length: totalPreguntas }, (_, i) => [
     (i + 1).toString(),
     "",
   ]);
