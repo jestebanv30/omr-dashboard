@@ -10,7 +10,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -33,8 +32,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -54,7 +51,6 @@ import {
 } from "@/lib/firebase/estudiantesService";
 import {
   IconChevronDown,
-  IconDotsVertical,
   IconEdit,
   IconLayoutColumns,
   IconPlus,
@@ -121,28 +117,21 @@ const ActionCell = ({
   };
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <IconDotsVertical className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => setShowEditForm(true)}>
-            <IconEdit className="mr-2 h-4 w-4" />
-            Editar
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => setShowDeleteDialog(true)}
-            className="text-red-600"
-          >
-            <IconTrash className="mr-2 h-4 w-4" />
-            Eliminar
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <div className="flex gap-2">
+      <Button
+        variant="ghost"
+        className="h-8 w-8 p-0"
+        onClick={() => setShowEditForm(true)}
+      >
+        <IconEdit className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        className="h-8 w-8 p-0 text-red-600"
+        onClick={() => setShowDeleteDialog(true)}
+      >
+        <IconTrash className="h-4 w-4" />
+      </Button>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
@@ -179,7 +168,7 @@ const ActionCell = ({
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
         />
       )}
-    </>
+    </div>
   );
 };
 
@@ -238,6 +227,17 @@ const columns: ColumnDef<Estudiante>[] = [
     header: "Curso",
   },
   {
+    id: "respuestasMarcadas",
+    header: "Respuestas",
+    cell: ({ row }) => {
+      const total = Object.keys(row.original.respuestas).length;
+      const marcadas = Object.values(row.original.respuestas).filter(
+        (r) => r !== ""
+      ).length;
+      return `${marcadas}/${total}`;
+    },
+  },
+  {
     id: "actions",
     cell: ActionCell,
   },
@@ -276,7 +276,6 @@ export function DataTableEstudiantes({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -295,6 +294,10 @@ export function DataTableEstudiantes({
   });
 
   const totalListos = estudiantes.filter((e) => e.listo).length;
+  const totalFiltrados = table.getFilteredRowModel().rows.length;
+  const totalListosFiltrados = table
+    .getFilteredRowModel()
+    .rows.filter((row) => row.original.listo).length;
 
   return (
     <div className="w-full">
@@ -399,26 +402,7 @@ export function DataTableEstudiantes({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
+          {totalListosFiltrados} de {totalFiltrados} estudiante(s) listo(s).
         </div>
       </div>
 

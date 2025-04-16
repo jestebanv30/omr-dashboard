@@ -62,6 +62,13 @@ export function SectionCards() {
     setEstudiantes([]);
   };
 
+  const volverAGrado = async () => {
+    const cursosData = await obtenerCursosPorGrado(gradoSeleccionado);
+    setCursos(cursosData);
+    setCursoSeleccionado("");
+    setEstudiantes([]);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 px-4 text-sm text-muted-foreground">
@@ -74,7 +81,12 @@ export function SectionCards() {
         {gradoSeleccionado && (
           <>
             <IconChevronRight className="size-4" />
-            <span>Grado {gradoSeleccionado}</span>
+            <span
+              className="cursor-pointer hover:text-foreground"
+              onClick={volverAGrado}
+            >
+              Grado {gradoSeleccionado}
+            </span>
           </>
         )}
         {cursoSeleccionado && (

@@ -40,11 +40,9 @@ export function EditEstudianteForm({
   ...props
 }: EditEstudianteFormProps) {
   const [formData, setFormData] = useState<Estudiante>(estudiante);
-  const [currentPage, setCurrentPage] = useState(0);
   const [showDialog, setShowDialog] = useState(false);
 
   const respuestasArray = Object.entries(formData.respuestas);
-  const preguntasPorPagina = 30;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,9 +82,15 @@ export function EditEstudianteForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn(
+        "flex flex-col gap-6 overflow-y-auto h-full md:h-auto p-4 md:p-0",
+        className
+      )}
+      {...props}
+    >
       <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>¿Confirmar cambios?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -116,7 +120,7 @@ export function EditEstudianteForm({
         <CardContent className="space-y-8">
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="nombre">Nombre</Label>
                   <Input
@@ -158,62 +162,28 @@ export function EditEstudianteForm({
               </div>
 
               <div className="border rounded-lg p-4 mt-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold">
-                    Preguntas {currentPage * preguntasPorPagina + 1} a{" "}
-                    {Math.min(
-                      (currentPage + 1) * preguntasPorPagina,
-                      respuestasArray.length
-                    )}{" "}
-                    de {respuestasArray.length}
-                  </h3>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setCurrentPage((prev) => prev - 1)}
-                      disabled={currentPage === 0}
+                <h3 className="text-lg font-semibold mb-4">
+                  Preguntas (Total: {respuestasArray.length})
+                </h3>
+                <div className="grid grid-cols-10 gap-4 max-h-[60vh] overflow-y-auto pr-4">
+                  {respuestasArray.map(([pregunta, respuesta], index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col items-center gap-1"
                     >
-                      Anterior
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setCurrentPage((prev) => prev + 1)}
-                      disabled={
-                        (currentPage + 1) * preguntasPorPagina >=
-                        respuestasArray.length
-                      }
-                    >
-                      Siguiente
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                  {respuestasArray
-                    .slice(
-                      currentPage * preguntasPorPagina,
-                      (currentPage + 1) * preguntasPorPagina
-                    )
-                    .map(([pregunta, respuesta], index) => (
-                      <div
-                        key={index}
-                        className="flex flex-col items-center gap-1"
-                      >
-                        <Label className="text-sm font-medium text-muted-foreground">
-                          {pregunta}
-                        </Label>
-                        <Input
-                          className="w-14 text-center"
-                          maxLength={1}
-                          value={respuesta}
-                          onChange={(e) =>
-                            handleRespuestaChange(pregunta, e.target.value)
-                          }
-                        />
-                      </div>
-                    ))}
+                      <Label className="text-sm font-medium text-muted-foreground">
+                        {pregunta}
+                      </Label>
+                      <Input
+                        className="w-14 text-center"
+                        maxLength={1}
+                        value={respuesta}
+                        onChange={(e) =>
+                          handleRespuestaChange(pregunta, e.target.value)
+                        }
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
