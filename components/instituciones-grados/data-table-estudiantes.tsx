@@ -37,9 +37,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  eliminarEstudiante,
   marcarEstudianteComoListo,
   obtenerEstudiantesPorCurso,
-  eliminarEstudiante,
 } from "@/lib/firebase/estudiantesService";
 import {
   IconChevronDown,
@@ -50,9 +50,9 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { EditEstudianteForm } from "./edit-estudiante";
-import { AgregarEstudianteForm } from "./agregar-estudiante";
 import { toast } from "sonner";
+import { AgregarEstudianteForm } from "./agregar-estudiante";
+import { EditEstudianteForm } from "./edit-estudiante";
 
 interface TableMeta {
   updateData: (data: Estudiante[]) => void;
@@ -377,6 +377,8 @@ export function DataTableEstudiantes({
 
       {showAgregarForm && (
         <AgregarEstudianteForm
+          grado={grado}
+          curso={curso}
           onClose={() => {
             setShowAgregarForm(false);
             obtenerEstudiantesPorCurso(grado, curso).then((datos) => {
