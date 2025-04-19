@@ -53,23 +53,19 @@ export function AgregarEstudianteForm({
   const [totalPreguntas, setTotalPreguntas] = useState(0);
 
   useEffect(() => {
-    const fetchRespuestasCorrectas = async () => {
+    const fetchCantidadPreguntas = async () => {
       try {
-        const response = await fetch("/respuestas_correctas.json");
+        const response = await fetch("/cantidad_preguntas.json");
         const data = await response.json();
         if (grado && data[grado]) {
-          const respuestasCorrectas = data[grado].respuestas_correctas;
-          const maxPregunta = Math.max(
-            ...Object.keys(respuestasCorrectas).map(Number)
-          );
-          setTotalPreguntas(maxPregunta);
+          setTotalPreguntas(data[grado]);
         }
       } catch (error) {
-        console.error("Error al cargar respuestas correctas:", error);
+        console.error("Error al cargar cantidad de preguntas:", error);
       }
     };
 
-    fetchRespuestasCorrectas();
+    fetchCantidadPreguntas();
   }, [grado]);
 
   // Crear array de preguntas basado en el total de preguntas del grado

@@ -1,6 +1,6 @@
 "use client";
 
-import { subirResultadosEstudiantes } from "@/lib/firebase/uploadService";
+import { subirRespuestasCorrectas } from "@/lib/firebase/uploadService";
 import { IconUpload } from "@tabler/icons-react";
 import * as React from "react";
 
@@ -28,8 +28,8 @@ export function CargarJson() {
       const data = JSON.parse(contenido);
       setMensaje("Cargando datos...");
 
-      await subirResultadosEstudiantes(data);
-      setMensaje("Datos cargados exitosamente.");
+      await subirRespuestasCorrectas(data);
+      setMensaje("Respuestas correctas cargadas exitosamente.");
       setError("");
     } catch (err) {
       console.error(err);
@@ -62,8 +62,8 @@ export function CargarJson() {
       const data = JSON.parse(contenido);
       setMensaje("Cargando datos...");
 
-      await subirResultadosEstudiantes(data);
-      setMensaje("Datos cargados exitosamente.");
+      await subirRespuestasCorrectas(data);
+      setMensaje("Respuestas correctas cargadas exitosamente.");
       setError("");
     } catch (err) {
       console.error(err);
@@ -75,9 +75,9 @@ export function CargarJson() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Cargar Resultados JSON</CardTitle>
+        <CardTitle>Cargar Respuestas Correctas JSON</CardTitle>
         <CardDescription>
-          Selecciona un archivo JSON para cargar los resultados
+          Selecciona un archivo JSON para cargar las respuestas correctas
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">

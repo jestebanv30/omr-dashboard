@@ -1,4 +1,4 @@
-import { CargarJson } from "@/components/cargar-json/cargar-json";
+import { CargarJson } from "@/components/dashboard/cargar-json/cargar-json";
 import AnimatedCard from "@/components/utils/animated-card";
 import Title from "@/components/utils/title";
 

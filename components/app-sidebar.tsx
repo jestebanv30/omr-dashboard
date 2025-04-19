@@ -2,8 +2,9 @@
 
 import {
   IconFileSpreadsheet,
-  IconHelp,
   IconHome,
+  IconLogout,
+  IconPlus,
   IconSettings,
   IconUpload,
 } from "@tabler/icons-react";
@@ -35,6 +36,11 @@ const data = {
       icon: IconUpload,
     },
     {
+      title: "Añadir Respuestas",
+      url: "/dashboard/respuestas-correctas",
+      icon: IconPlus,
+    },
+    {
       title: "Generar Excel",
       url: "/dashboard/generar-excel",
       icon: IconFileSpreadsheet,
@@ -47,9 +53,9 @@ const data = {
       icon: IconSettings,
     },
     {
-      title: "Ayuda",
+      title: "Cerrar sesión",
       url: "#",
-      icon: IconHelp,
+      icon: IconLogout,
     },
   ],
 };

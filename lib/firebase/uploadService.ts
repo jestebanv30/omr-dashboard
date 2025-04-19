@@ -26,24 +26,40 @@ interface ResultadoJson {
   estudiantes: Estudiante[];
 }
 
+interface RespuestasCorrectas {
+  respuestas_correctas: Record<string, string>;
+  materias: Record<string, number[]>;
+}
+
+interface RespuestasJson {
+  [grado: string]: RespuestasCorrectas;
+}
+
 const getCollectionByUser = () => {
   const user = auth.currentUser;
   if (!user) throw new Error("Usuario no autenticado");
 
   if (user.email === "admin2025@gmail.com") {
-    return "estudiantes";
+    return {
+      estudiantes: "estudiantes",
+      respuestas: "respuestas_correctas",
+    };
   } else if (user.email === "adminremediossolano@gmail.com") {
-    return "estudiantes_remedios_solano";
+    return {
+      estudiantes: "estudiantes_remedios_solano",
+      respuestas: "respuestas_correctas_remedios_solano",
+    };
   } else {
     throw new Error("Usuario no autorizado");
   }
 };
 
 export const subirResultadosEstudiantes = async (data: ResultadoJson) => {
-  const collectionName = getCollectionByUser();
-  const estudiantesRef = collection(db, collectionName);
+  const collections = getCollectionByUser();
+  const estudiantesRef = collection(db, collections.estudiantes);
 
-  const isNuevaColeccion = collectionName === "estudiantes_remedios_solano";
+  const isNuevaColeccion =
+    collections.estudiantes === "estudiantes_remedios_solano";
 
   if (isNuevaColeccion) {
     const batchPromises = data.estudiantes.map(async (est) => {
@@ -93,4 +109,22 @@ export const subirResultadosEstudiantes = async (data: ResultadoJson) => {
 
     await Promise.all(batchPromises);
   }
+};
+
+export const subirRespuestasCorrectas = async (data: RespuestasJson) => {
+  const collections = getCollectionByUser();
+  const respuestasRef = collection(db, collections.respuestas);
+
+  const batchPromises = Object.entries(data).map(
+    async ([grado, respuestas]) => {
+      const docRef = doc(respuestasRef, grado);
+      await setDoc(docRef, {
+        respuestas_correctas: respuestas.respuestas_correctas,
+        materias: respuestas.materias,
+        fechaActualizacion: new Date().toISOString(),
+      });
+    }
+  );
+
+  await Promise.all(batchPromises);
 };

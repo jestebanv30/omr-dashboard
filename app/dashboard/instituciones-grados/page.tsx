@@ -1,6 +1,6 @@
 import AnimatedCard from "@/components/utils/animated-card";
 import Title from "@/components/utils/title";
-import { SectionCards } from "@/components/instituciones-grados/gradosview";
+import { SectionCards } from "@/components/dashboard/instituciones-grados/gradosview";
 
 const Page = () => {
   return (

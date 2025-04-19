@@ -4,6 +4,10 @@ import {
   Estudiante,
   obtenerEstudiantesPorGrado,
 } from "@/lib/firebase/estudiantesService";
+import {
+  obtenerRespuestasCorrectas,
+  obtenerTodasLasRespuestasCorrectas,
+} from "@/lib/firebase/respuestasService";
 import { IconFileSpreadsheet } from "@tabler/icons-react";
 import * as React from "react";
 import * as XLSX from "xlsx";
@@ -16,34 +20,40 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface Materias {
-  [materia: string]: [number, number];
-}
-
-interface RespuestasCorrectas {
-  [pregunta: string]: string;
-}
-
-interface RespuestasJSON {
-  [grado: string]: {
-    respuestas_correctas: RespuestasCorrectas;
-    materias: Materias;
-  };
-}
-
 export function GenerarExcel() {
   const [grados, setGrados] = React.useState<string[]>([]);
   const [seleccionado, setSeleccionado] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [mensaje, setMensaje] = React.useState("");
   const [error, setError] = React.useState("");
+  const [cantidadPreguntas, setCantidadPreguntas] = React.useState<
+    Record<string, number>
+  >({});
 
   React.useEffect(() => {
     const obtener = async () => {
       try {
-        const res = await fetch("/respuestas_correctas.json");
-        const data: RespuestasJSON = await res.json();
-        setGrados(Object.keys(data));
+        // Cargar cantidad_preguntas.json
+        const respCantidad = await fetch("/cantidad_preguntas.json");
+        const cantidadPorGrado = await respCantidad.json();
+        setCantidadPreguntas(cantidadPorGrado);
+
+        // Obtener respuestas correctas
+        const respuestas = await obtenerTodasLasRespuestasCorrectas();
+
+        // Filtrar grados que coincidan con la cantidad de preguntas
+        const gradosDisponibles = respuestas
+          .filter((r) => {
+            const numRespuestas = Object.keys(
+              r.respuestas_correctas || {}
+            ).length;
+            const cantidadEsperada = cantidadPorGrado[r.id!];
+            return numRespuestas === cantidadEsperada;
+          })
+          .map((r) => r.id!)
+          .sort();
+
+        setGrados(gradosDisponibles);
       } catch (err) {
         console.error(err);
         setError("Error al cargar los grados disponibles");
@@ -59,12 +69,13 @@ export function GenerarExcel() {
     setError("");
 
     try {
-      const res = await fetch("/respuestas_correctas.json");
-      const data: RespuestasJSON = await res.json();
+      const respuestasData = await obtenerRespuestasCorrectas(seleccionado);
+      if (!respuestasData) {
+        throw new Error("No se encontraron respuestas para este grado");
+      }
 
-      const respuestasCorrectas: RespuestasCorrectas =
-        data[seleccionado]?.respuestas_correctas || {};
-      const materias: Materias = data[seleccionado]?.materias || {};
+      const respuestasCorrectas = respuestasData.respuestas_correctas;
+      const materias = respuestasData.materias;
 
       const estudiantes: Estudiante[] = await obtenerEstudiantesPorGrado(
         seleccionado
@@ -184,7 +195,7 @@ export function GenerarExcel() {
                 <option value="">Seleccione un grado</option>
                 {grados.map((g) => (
                   <option key={g} value={g}>
-                    Grado {g}
+                    {g}
                   </option>
                 ))}
               </select>

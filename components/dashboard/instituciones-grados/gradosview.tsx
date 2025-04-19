@@ -30,8 +30,20 @@ export function SectionCards() {
 
   useEffect(() => {
     const cargarGrados = async () => {
-      const gradosData = await agruparPorGrado();
-      setGrados(gradosData);
+      try {
+        const gradosData = await agruparPorGrado();
+        console.log("Grados obtenidos:", gradosData); // Para debug
+
+        // Filtrar grados vacíos y undefined/null
+        const gradosConCursos = gradosData.filter(
+          (grado) => grado && typeof grado === "string" && grado.trim() !== ""
+        );
+
+        console.log("Grados filtrados:", gradosConCursos); // Para debug
+        setGrados(gradosConCursos);
+      } catch (error) {
+        console.error("Error al cargar grados:", error);
+      }
     };
     cargarGrados();
   }, []);
