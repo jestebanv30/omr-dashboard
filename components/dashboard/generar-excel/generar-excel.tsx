@@ -26,9 +26,7 @@ export function GenerarExcel() {
   const [loading, setLoading] = React.useState(false);
   const [mensaje, setMensaje] = React.useState("");
   const [error, setError] = React.useState("");
-  const [cantidadPreguntas, setCantidadPreguntas] = React.useState<
-    Record<string, number>
-  >({});
+  const [, setCantidadPreguntas] = React.useState<Record<string, number>>({});
 
   React.useEffect(() => {
     const obtener = async () => {
