@@ -1,5 +1,6 @@
 "use client";
 
+import { auth } from "@/lib/firebase/config";
 import {
   Estudiante,
   obtenerEstudiantesPorGrado,
@@ -84,6 +85,9 @@ export function GenerarExcel() {
 
       const workbook = XLSX.utils.book_new();
 
+      const user = auth.currentUser;
+      const isRemediosSolano = user?.email === "adminremediossolano@gmail.com";
+
       for (const curso of cursos) {
         const filtrados = estudiantes.filter((e) => e.curso === curso);
         const hojaData: Record<string, string | number>[] = [];
@@ -109,7 +113,13 @@ export function GenerarExcel() {
             for (let i = inicio; i <= fin; i++) {
               const res = est.respuestas?.[i.toString()];
               const resCorr = respuestasCorrectas[i.toString()];
-              if (resCorr && resCorr !== "Anulada") {
+
+              // Verificar el valor anulado según el usuario
+              const esAnulada = isRemediosSolano
+                ? resCorr?.toUpperCase() === "*"
+                : resCorr?.toUpperCase().trim() === "ANULADA";
+
+              if (resCorr && !esAnulada) {
                 total++;
                 if (res === resCorr) correctas++;
               }
