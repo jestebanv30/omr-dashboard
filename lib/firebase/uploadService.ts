@@ -49,6 +49,11 @@ const getCollectionByUser = () => {
       estudiantes: "estudiantes_remedios_solano",
       respuestas: "respuestas_correctas_remedios_solano",
     };
+  } else if (user.email === "adminmariaaux@gmail.com") {
+    return {
+      estudiantes: "estudiantes_maria_auxiliadora",
+      respuestas: "respuestas_correctas_maria_auxiliadora",
+    };
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -59,7 +64,8 @@ export const subirResultadosEstudiantes = async (data: ResultadoJson) => {
   const estudiantesRef = collection(db, collections.estudiantes);
 
   const isNuevaColeccion =
-    collections.estudiantes === "estudiantes_remedios_solano";
+    collections.estudiantes === "estudiantes_remedios_solano" ||
+    collections.estudiantes === "estudiantes_maria_auxiliadora";
 
   if (isNuevaColeccion) {
     const batchPromises = data.estudiantes.map(async (est) => {

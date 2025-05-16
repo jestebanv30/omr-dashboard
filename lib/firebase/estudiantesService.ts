@@ -31,6 +31,8 @@ const getCollectionByUser = () => {
     return "estudiantes";
   } else if (user.email === "adminremediossolano@gmail.com") {
     return "estudiantes_remedios_solano";
+  } else if (user.email === "adminmariaaux@gmail.com") {
+    return "estudiantes_maria_auxiliadora";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -44,6 +46,8 @@ export const getInstitucionByUser = () => {
     return "Institución Educativa El Carmelo";
   } else if (user.email === "adminremediossolano@gmail.com") {
     return "Institución Remedios Solano";
+  } else if (user.email === "adminmariaaux@gmail.com") {
+    return "Institución María Auxiliadora";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -113,7 +117,9 @@ export const agregarEstudiante = async (
 ): Promise<Estudiante> => {
   const collectionName = getCollectionByUser();
   const institucion = getInstitucionByUser();
-  const isNuevaColeccion = collectionName === "estudiantes_remedios_solano";
+  const isNuevaColeccion =
+    collectionName === "estudiantes_remedios_solano" ||
+    collectionName === "estudiantes_maria_auxiliadora";
 
   if (isNuevaColeccion) {
     const docRef = doc(collection(db, collectionName));

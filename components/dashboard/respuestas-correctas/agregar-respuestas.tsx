@@ -24,6 +24,7 @@ import {
   guardarRespuestasCorrectas,
   obtenerRespuestasCorrectas,
 } from "@/lib/firebase/respuestasService";
+import { getInstitucionByUser } from "@/lib/firebase/userInfoService";
 import { cn } from "@/lib/utils";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -70,11 +71,18 @@ export function AgregarRespuestasForm({
       const cargarDatos = async () => {
         setCargando(true);
         try {
-          // Cargar cantidad de preguntas
-          const response = await fetch("/cantidad_preguntas.json");
+          // Cargar cantidad de preguntas por institución y grado
+          const response = await fetch(
+            "/cantidad_preguntas_por_colegio_y_grado.json"
+          );
           const data = await response.json();
-          if (grado && data[grado]) {
-            setTotalPreguntas(data[grado]);
+
+          const institucion = getInstitucionByUser();
+
+          if (grado && data[institucion] && data[institucion][grado]) {
+            setTotalPreguntas(data[institucion][grado]);
+          } else {
+            setTotalPreguntas(120); // valor por defecto si no encuentra coincidencia
           }
 
           // Cargar respuestas existentes

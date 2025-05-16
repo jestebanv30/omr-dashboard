@@ -24,6 +24,7 @@ import {
   agregarEstudiante,
   type Estudiante,
 } from "@/lib/firebase/estudiantesService";
+import { getInstitucionByUser } from "@/lib/firebase/userInfoService";
 import { cn } from "@/lib/utils";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -55,10 +56,17 @@ export function AgregarEstudianteForm({
   useEffect(() => {
     const fetchCantidadPreguntas = async () => {
       try {
-        const response = await fetch("/cantidad_preguntas.json");
+        const response = await fetch(
+          "/cantidad_preguntas_por_colegio_y_grado.json"
+        );
         const data = await response.json();
-        if (grado && data[grado]) {
-          setTotalPreguntas(data[grado]);
+
+        const institucion = getInstitucionByUser();
+
+        if (grado && data[institucion] && data[institucion][grado]) {
+          setTotalPreguntas(data[institucion][grado]);
+        } else {
+          setTotalPreguntas(120); // valor por defecto
         }
       } catch (error) {
         console.error("Error al cargar cantidad de preguntas:", error);

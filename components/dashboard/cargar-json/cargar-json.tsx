@@ -1,6 +1,6 @@
 "use client";
 
-import { subirRespuestasCorrectas } from "@/lib/firebase/uploadService";
+import { subirResultadosEstudiantes } from "@/lib/firebase/uploadService";
 import { IconUpload } from "@tabler/icons-react";
 import * as React from "react";
 
@@ -28,7 +28,7 @@ export function CargarJson() {
       const data = JSON.parse(contenido);
       setMensaje("Cargando datos...");
 
-      await subirRespuestasCorrectas(data);
+      await subirResultadosEstudiantes(data); //await subirRespuestasCorrectas(data);
       setMensaje("Respuestas correctas cargadas exitosamente.");
       setError("");
     } catch (err) {
@@ -62,7 +62,7 @@ export function CargarJson() {
       const data = JSON.parse(contenido);
       setMensaje("Cargando datos...");
 
-      await subirRespuestasCorrectas(data);
+      await subirResultadosEstudiantes(data); //await subirRespuestasCorrectas(data);
       setMensaje("Respuestas correctas cargadas exitosamente.");
       setError("");
     } catch (err) {

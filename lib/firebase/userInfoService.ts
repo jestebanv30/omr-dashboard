@@ -1,0 +1,18 @@
+import { auth } from "./config";
+
+export const getInstitucionByUser = (): string => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Usuario no autenticado");
+
+  const email = user.email || "";
+
+  if (email === "admin2025@gmail.com") {
+    return "Institución Educativa El Carmelo";
+  } else if (email === "adminremediossolano@gmail.com") {
+    return "Institución Remedios Solano";
+  } else if (email === "adminmariaaux@gmail.com") {
+    return "Institución María Auxiliadora";
+  }
+
+  return "Desconocido";
+};

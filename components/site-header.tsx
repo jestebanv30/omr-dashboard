@@ -14,6 +14,8 @@ export function SiteHeader() {
       return "Resultados - Institución Educativa El Carmelo";
     } else if (user?.email === "adminremediossolano@gmail.com") {
       return "Resultados - Institución Remedios Solano";
+    } else if (user?.email === "adminmariaaux@gmail.com") {
+      return "Resultados - Institución Maria Auxiliadora";
     }
     return "Resultados de Estudiantes";
   };

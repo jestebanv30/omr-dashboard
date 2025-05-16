@@ -18,6 +18,8 @@ const getCollectionByUser = () => {
     return "respuestas_correctas";
   } else if (user.email === "adminremediossolano@gmail.com") {
     return "respuestas_correctas_remedios_solano";
+  } else if (user.email === "adminmariaaux@gmail.com") {
+    return "respuestas_correctas_maria_auxiliadora";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -31,6 +33,8 @@ const getInstitucionByUser = () => {
     return "Institución Educativa El Carmelo";
   } else if (user.email === "adminremediossolano@gmail.com") {
     return "Institución Remedios Solano";
+  } else if (user.email === "adminmariaaux@gmail.com") {
+    return "Institución María Auxiliadora";
   } else {
     throw new Error("Usuario no autorizado");
   }
