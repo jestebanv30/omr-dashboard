@@ -20,6 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getInstitucionByUser } from "@/lib/firebase/userInfoService";
 
 export function GenerarExcel() {
   const [grados, setGrados] = React.useState<string[]>([]);
@@ -32,9 +33,15 @@ export function GenerarExcel() {
   React.useEffect(() => {
     const obtener = async () => {
       try {
-        // Cargar cantidad_preguntas.json
-        const respCantidad = await fetch("/cantidad_preguntas.json");
-        const cantidadPorGrado = await respCantidad.json();
+        // Cargar cantidad de preguntas por colegio y grado
+        const respCantidad = await fetch(
+          "/cantidad_preguntas_por_colegio_y_grado.json"
+        );
+        const cantidadPorColegio = await respCantidad.json();
+
+        const institucion = getInstitucionByUser();
+        const cantidadPorGrado = cantidadPorColegio[institucion] || {};
+
         setCantidadPreguntas(cantidadPorGrado);
 
         // Obtener respuestas correctas
