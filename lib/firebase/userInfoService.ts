@@ -12,6 +12,8 @@ export const getInstitucionByUser = (): string => {
     return "Institución Remedios Solano";
   } else if (email === "adminmariaaux@gmail.com") {
     return "Institución María Auxiliadora";
+  } else if (email === "adminjoseeduardog@gmail.com") {
+    return "Institución José Eduardo Guerra";
   }
 
   return "Desconocido";

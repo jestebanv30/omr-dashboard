@@ -54,6 +54,11 @@ const getCollectionByUser = () => {
       estudiantes: "estudiantes_maria_auxiliadora",
       respuestas: "respuestas_correctas_maria_auxiliadora",
     };
+  } else if (user.email === "adminjoseeduardog@gmail.com") {
+    return {
+      estudiantes: "estudiantes_jose_eduardo_guerra",
+      respuestas: "respuestas_correctas_jose_eduardo_guerra",
+    };
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -65,7 +70,8 @@ export const subirResultadosEstudiantes = async (data: ResultadoJson) => {
 
   const isNuevaColeccion =
     collections.estudiantes === "estudiantes_remedios_solano" ||
-    collections.estudiantes === "estudiantes_maria_auxiliadora";
+    collections.estudiantes === "estudiantes_maria_auxiliadora" ||
+    collections.estudiantes === "estudiantes_jose_eduardo_guerra";
 
   if (isNuevaColeccion) {
     const batchPromises = data.estudiantes.map(async (est) => {

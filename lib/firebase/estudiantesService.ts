@@ -33,6 +33,8 @@ const getCollectionByUser = () => {
     return "estudiantes_remedios_solano";
   } else if (user.email === "adminmariaaux@gmail.com") {
     return "estudiantes_maria_auxiliadora";
+  } else if (user.email === "adminjoseeduardog@gmail.com") {
+    return "estudiantes_jose_eduardo_guerra";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -48,6 +50,8 @@ export const getInstitucionByUser = () => {
     return "Institución Remedios Solano";
   } else if (user.email === "adminmariaaux@gmail.com") {
     return "Institución María Auxiliadora";
+  } else if (user.email === "adminjoseeduardog@gmail.com") {
+    return "Institución José Eduardo Guerra";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -119,7 +123,8 @@ export const agregarEstudiante = async (
   const institucion = getInstitucionByUser();
   const isNuevaColeccion =
     collectionName === "estudiantes_remedios_solano" ||
-    collectionName === "estudiantes_maria_auxiliadora";
+    collectionName === "estudiantes_maria_auxiliadora" ||
+    collectionName === "estudiantes_jose_eduardo_guerra";
 
   if (isNuevaColeccion) {
     const docRef = doc(collection(db, collectionName));

@@ -20,6 +20,8 @@ const getCollectionByUser = () => {
     return "respuestas_correctas_remedios_solano";
   } else if (user.email === "adminmariaaux@gmail.com") {
     return "respuestas_correctas_maria_auxiliadora";
+  } else if (user.email === "adminjoseeduardog@gmail.com") {
+    return "respuestas_correctas_jose_eduardo_guerra";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -35,6 +37,8 @@ const getInstitucionByUser = () => {
     return "Institución Remedios Solano";
   } else if (user.email === "adminmariaaux@gmail.com") {
     return "Institución María Auxiliadora";
+  } else if (user.email === "adminjoseeduardog@gmail.com") {
+    return "Institución José Eduardo Guerra";
   } else {
     throw new Error("Usuario no autorizado");
   }

@@ -16,6 +16,8 @@ export function SiteHeader() {
       return "Resultados - Institución Remedios Solano";
     } else if (user?.email === "adminmariaaux@gmail.com") {
       return "Resultados - Institución Maria Auxiliadora";
+    } else if (user?.email === "adminjoseeduardog@gmail.com") {
+      return "Resultados - Institución José Eduardo Guerra";
     }
     return "Resultados de Estudiantes";
   };
