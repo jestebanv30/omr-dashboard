@@ -14,6 +14,8 @@ export const getInstitucionByUser = (): string => {
     return "Institución María Auxiliadora";
   } else if (email === "adminjoseeduardog@gmail.com") {
     return "Institución José Eduardo Guerra";
+  } else if (email === "adminruralashajaa@gmail.com") {
+    return "Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
   }
 
   return "Desconocido";

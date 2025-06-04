@@ -22,6 +22,8 @@ const getCollectionByUser = () => {
     return "respuestas_correctas_maria_auxiliadora";
   } else if (user.email === "adminjoseeduardog@gmail.com") {
     return "respuestas_correctas_jose_eduardo_guerra";
+  } else if (user.email === "adminruralashajaa@gmail.com") {
+    return "respuestas_correctas_rural_ashajaa";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -39,6 +41,8 @@ const getInstitucionByUser = () => {
     return "Institución María Auxiliadora";
   } else if (user.email === "adminjoseeduardog@gmail.com") {
     return "Institución José Eduardo Guerra";
+  } else if (user.email === "adminruralashajaa@gmail.com") {
+    return "Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
   } else {
     throw new Error("Usuario no autorizado");
   }

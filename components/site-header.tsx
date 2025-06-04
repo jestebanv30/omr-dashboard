@@ -18,6 +18,8 @@ export function SiteHeader() {
       return "Resultados - Institución Maria Auxiliadora";
     } else if (user?.email === "adminjoseeduardog@gmail.com") {
       return "Resultados - Institución José Eduardo Guerra";
+    } else if (user?.email === "adminruralashajaa@gmail.com") {
+      return "Resultados - Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
     }
     return "Resultados de Estudiantes";
   };
