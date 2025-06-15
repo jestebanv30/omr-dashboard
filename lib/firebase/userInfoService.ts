@@ -16,6 +16,8 @@ export const getInstitucionByUser = (): string => {
     return "Institución José Eduardo Guerra";
   } else if (email === "adminruralashajaa@gmail.com") {
     return "Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
+  } else if (email === "adminelcarmelo@gmail.com") {
+    return "Institución Educativa El Carmelo";
   }
 
   return "Desconocido";

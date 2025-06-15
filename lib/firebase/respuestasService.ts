@@ -24,6 +24,8 @@ const getCollectionByUser = () => {
     return "respuestas_correctas_jose_eduardo_guerra";
   } else if (user.email === "adminruralashajaa@gmail.com") {
     return "respuestas_correctas_rural_ashajaa";
+  } else if (user.email === "adminelcarmelo@gmail.com") {
+    return "respuestas_correctas_el_carmelo";
   } else {
     throw new Error("Usuario no autorizado");
   }
