@@ -45,6 +45,8 @@ const getInstitucionByUser = () => {
     return "Institución José Eduardo Guerra";
   } else if (user.email === "adminruralashajaa@gmail.com") {
     return "Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
+  } else if (user.email === "adminelcarmelo@gmail.com") {
+    return "Institución Educativa El Carmelo";
   } else {
     throw new Error("Usuario no autorizado");
   }
