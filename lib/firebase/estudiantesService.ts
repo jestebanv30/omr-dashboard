@@ -41,6 +41,8 @@ const getCollectionByUser = () => {
     return "estudiantes_el_carmelo";
   } else if (user.email === "adminroigvillalba@gmail.com") {
     return "estudiantes_roig_villalba";
+  } else if (user.email === "adminelcarmelo3@gmail.com") {
+    return "estudiantes_el_carmelo_3";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -64,6 +66,8 @@ export const getInstitucionByUser = () => {
     return "Institución Educativa El Carmelo";
   } else if (user.email === "adminroigvillalba@gmail.com") {
     return "Institución Educativa Roig Villalba";
+  } else if (user.email === "adminelcarmelo3@gmail.com") {
+    return "Institución Educativa El Carmelo 3";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -139,7 +143,8 @@ export const agregarEstudiante = async (
     collectionName === "estudiantes_jose_eduardo_guerra" ||
     collectionName === "estudiantes_rural_ashajaa" ||
     collectionName === "estudiantes_el_carmelo" ||
-    collectionName === "estudiantes_roig_villalba";
+    collectionName === "estudiantes_roig_villalba" ||
+    collectionName === "estudiantes_el_carmelo_3";
 
   if (isNuevaColeccion) {
     const docRef = doc(collection(db, collectionName));

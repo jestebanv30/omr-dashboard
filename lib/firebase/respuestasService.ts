@@ -28,6 +28,8 @@ const getCollectionByUser = () => {
     return "respuestas_correctas_el_carmelo";
   } else if (user.email === "adminroigvillalba@gmail.com") {
     return "respuestas_correctas_roig_villalba";
+  } else if (user.email === "adminelcarmelo3@gmail.com") {
+    return "respuestas_correctas_el_carmelo_3";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -51,6 +53,8 @@ const getInstitucionByUser = () => {
     return "Institución Educativa El Carmelo";
   } else if (user.email === "adminroigvillalba@gmail.com") {
     return "Institución Educativa Roig Villalba";
+  } else if (user.email === "adminelcarmelo3@gmail.com") {
+    return "Institución Educativa El Carmelo 3";
   } else {
     throw new Error("Usuario no autorizado");
   }
