@@ -26,6 +26,8 @@ const getCollectionByUser = () => {
     return "respuestas_correctas_rural_ashajaa";
   } else if (user.email === "adminelcarmelo@gmail.com") {
     return "respuestas_correctas_el_carmelo";
+  } else if (user.email === "adminroigvillalba@gmail.com") {
+    return "respuestas_correctas_roig_villalba";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -47,6 +49,8 @@ const getInstitucionByUser = () => {
     return "Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
   } else if (user.email === "adminelcarmelo@gmail.com") {
     return "Institución Educativa El Carmelo";
+  } else if (user.email === "adminroigvillalba@gmail.com") {
+    return "Institución Educativa Roig Villalba";
   } else {
     throw new Error("Usuario no autorizado");
   }

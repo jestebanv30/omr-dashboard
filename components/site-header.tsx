@@ -22,6 +22,8 @@ export function SiteHeader() {
       return "Resultados - Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
     } else if (user?.email === "adminelcarmelo@gmail.com") {
       return "Resultados - Institución Educativa El Carmelo";
+    } else if (user?.email === "adminroigvillalba@gmail.com") {
+      return "Resultados - Institución Educativa Roig Villalba";
     }
     return "Resultados de Estudiantes";
   };

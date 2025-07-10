@@ -18,7 +18,8 @@ export const getInstitucionByUser = (): string => {
     return "Institución Etnoeducativa Rural Ashajaa Jamuchenchon";
   } else if (email === "adminelcarmelo@gmail.com") {
     return "Institución Educativa El Carmelo";
+  } else if (email === "adminroigvillalba@gmail.com") {
+    return "Institución Educativa Roig Villalba";
   }
-
   return "Desconocido";
 };
