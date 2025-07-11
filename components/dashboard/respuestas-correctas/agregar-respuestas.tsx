@@ -79,15 +79,55 @@ export function AgregarRespuestasForm({
 
           const institucion = getInstitucionByUser();
 
-          if (grado && data[institucion] && data[institucion][grado]) {
-            setTotalPreguntas(data[institucion][grado]);
-          } else {
-            setTotalPreguntas(120); // valor por defecto si no encuentra coincidencia
+          // Normalizar el nombre de la institución para evitar errores de espacios o mayúsculas
+          // y asegurar coincidencia exacta con el JSON
+          let institucionNormalizada = institucion;
+          // Si no existe, intentar buscar por coincidencia insensible a mayúsculas/minúsculas y espacios
+          if (!data[institucionNormalizada]) {
+            const keys = Object.keys(data);
+            const match = keys.find(
+              (k) => k.trim().toLowerCase() === institucion.trim().toLowerCase()
+            );
+            if (match) institucionNormalizada = match;
           }
 
+          // Buscar el total de preguntas para la institución y grado exactos
+          let total = 0;
+          // Solución: aseguramos que grado sea string y no undefined
+          const gradoKey = grado ?? "";
+          if (
+            gradoKey &&
+            data[institucionNormalizada] &&
+            Object.prototype.hasOwnProperty.call(
+              data[institucionNormalizada],
+              gradoKey
+            )
+          ) {
+            total = data[institucionNormalizada][gradoKey];
+          } else {
+            // Si no existe el grado en la institución, buscar si existe en otra institución con el mismo nombre base
+            // (por si hay errores de duplicidad en el JSON)
+            const keys = Object.keys(data);
+            for (const key of keys) {
+              if (
+                key.trim().toLowerCase() === institucion.trim().toLowerCase() &&
+                gradoKey &&
+                data[key] &&
+                Object.prototype.hasOwnProperty.call(data[key], gradoKey)
+              ) {
+                total = data[key][gradoKey];
+                break;
+              }
+            }
+          }
+          // Si no se encontró, usar valor por defecto
+          setTotalPreguntas(total > 0 ? total : 120);
+
           // Cargar respuestas existentes
-          if (grado) {
-            const respuestasActuales = await obtenerRespuestasCorrectas(grado);
+          if (gradoKey) {
+            const respuestasActuales = await obtenerRespuestasCorrectas(
+              gradoKey
+            );
             if (respuestasActuales) {
               setRespuestasExistentes(
                 respuestasActuales.respuestas_correctas || {}
