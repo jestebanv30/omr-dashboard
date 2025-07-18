@@ -22,6 +22,8 @@ export const getInstitucionByUser = (): string => {
     return "Institución Educativa Roig Villalba";
   } else if (email === "adminelcarmelo3@gmail.com") {
     return "Institución Educativa El Carmelo 3";
+  } else if (email === "adminurbanamixta@gmail.com") {
+    return "Institución Educativa Urbana Mixta No.1";
   }
   return "Desconocido";
 };

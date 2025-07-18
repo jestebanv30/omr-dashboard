@@ -26,6 +26,8 @@ export function SiteHeader() {
       return "Resultados - Institución Educativa Roig Villalba";
     } else if (user?.email === "adminelcarmelo3@gmail.com") {
       return "Resultados - Institución Educativa El Carmelo 3";
+    } else if (user?.email === "adminurbanamixta@gmail.com") {
+      return "Resultados - Institución Educativa Urbana Mixta No.1";
     }
     return "Resultados de Estudiantes";
   };
