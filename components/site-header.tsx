@@ -28,6 +28,8 @@ export function SiteHeader() {
       return "Resultados - Institución Educativa El Carmelo 3";
     } else if (user?.email === "adminurbanamixta@gmail.com") {
       return "Resultados - Institución Educativa Urbana Mixta No.1";
+    } else if (user?.email === "admineusebio@gmail.com") {
+      return "Resultados - Institución Educativa Técnica Eusebio";
     }
     return "Resultados de Estudiantes";
   };

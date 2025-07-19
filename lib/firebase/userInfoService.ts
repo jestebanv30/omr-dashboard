@@ -24,6 +24,8 @@ export const getInstitucionByUser = (): string => {
     return "Institución Educativa El Carmelo 3";
   } else if (email === "adminurbanamixta@gmail.com") {
     return "Institución Educativa Urbana Mixta No.1";
+  } else if (email === "admineusebio@gmail.com") {
+    return "Institución Educativa Técnica Eusebio";
   }
   return "Desconocido";
 };

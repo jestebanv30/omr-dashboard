@@ -84,6 +84,11 @@ const getCollectionByUser = () => {
       estudiantes: "estudiantes_urbanamixta",
       respuestas: "respuestas_correctas_urbanamixta",
     };
+  } else if (user.email === "admineusebio@gmail.com") {
+    return {
+      estudiantes: "estudiantes_eusebio",
+      respuestas: "respuestas_correctas_eusebio",
+    };
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -101,7 +106,8 @@ export const subirResultadosEstudiantes = async (data: ResultadoJson) => {
     collections.estudiantes === "estudiantes_el_carmelo" ||
     collections.estudiantes === "estudiantes_roig_villalba" ||
     collections.estudiantes === "estudiantes_el_carmelo_3" ||
-    collections.estudiantes === "estudiantes_urbanamixta";
+    collections.estudiantes === "estudiantes_urbanamixta" ||
+    collections.estudiantes === "estudiantes_eusebio";
 
   if (isNuevaColeccion) {
     const batchPromises = data.estudiantes.map(async (est) => {
