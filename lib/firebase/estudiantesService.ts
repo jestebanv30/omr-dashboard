@@ -47,6 +47,8 @@ const getCollectionByUser = () => {
     return "estudiantes_urbanamixta";
   } else if (user.email === "admineusebio@gmail.com") {
     return "estudiantes_eusebio";
+  } else if (user.email === "admindavila@gmail.com") {
+    return "estudiantes_davila";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -76,6 +78,8 @@ export const getInstitucionByUser = () => {
     return "Institución Educativa Urbana Mixta No.1";
   } else if (user.email === "admineusebio@gmail.com") {
     return "Institución Educativa Técnica Eusebio";
+  } else if (user.email === "admindavila@gmail.com") {
+    return "Institución Educativa Manuel Antonio Davila";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -154,7 +158,8 @@ export const agregarEstudiante = async (
     collectionName === "estudiantes_roig_villalba" ||
     collectionName === "estudiantes_el_carmelo_3" ||
     collectionName === "estudiantes_urbanamixta" ||
-    collectionName === "estudiantes_eusebio";
+    collectionName === "estudiantes_eusebio" ||
+    collectionName === "estudiantes_davila";
 
   if (isNuevaColeccion) {
     const docRef = doc(collection(db, collectionName));

@@ -34,6 +34,8 @@ const getCollectionByUser = () => {
     return "respuestas_correctas_urbanamixta";
   } else if (user.email === "admineusebio@gmail.com") {
     return "respuestas_correctas_eusebio";
+  } else if (user.email === "admindavila@gmail.com") {
+    return "respuestas_correctas_davila";
   } else {
     throw new Error("Usuario no autorizado");
   }
@@ -63,6 +65,8 @@ const getInstitucionByUser = () => {
     return "Institución Educativa Urbana Mixta No.1";
   } else if (user.email === "admineusebio@gmail.com") {
     return "Institución Educativa Técnica Eusebio";
+  } else if (user.email === "admindavila@gmail.com") {
+    return "Institución Educativa Manuel Antonio Davila";
   } else {
     throw new Error("Usuario no autorizado");
   }

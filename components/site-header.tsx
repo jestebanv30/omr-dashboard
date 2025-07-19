@@ -30,6 +30,8 @@ export function SiteHeader() {
       return "Resultados - Institución Educativa Urbana Mixta No.1";
     } else if (user?.email === "admineusebio@gmail.com") {
       return "Resultados - Institución Educativa Técnica Eusebio";
+    } else if (user?.email === "admindavila@gmail.com") {
+      return "Resultados - Institución Educativa Manuel Antonio Davila";
     }
     return "Resultados de Estudiantes";
   };

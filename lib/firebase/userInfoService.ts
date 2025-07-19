@@ -26,6 +26,9 @@ export const getInstitucionByUser = (): string => {
     return "Institución Educativa Urbana Mixta No.1";
   } else if (email === "admineusebio@gmail.com") {
     return "Institución Educativa Técnica Eusebio";
+  } else if (email === "admindavila@gmail.com") {
+    return "Institución Educativa Manuel Antonio Davila";
+  } else {
+    return "Desconocido";
   }
-  return "Desconocido";
 };
